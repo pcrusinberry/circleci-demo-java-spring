@@ -1,34 +1,28 @@
-version: 2
-jobs:
-  build:
+version: 2  #Always start with the version number
+jobs:  # Here is where you define the job phases
+  build:  # The build job is the required job
     
-    working_directory: ~/circleci-demo-java-spring
+    working_directory: ~/circleci-demo-java-spring  
 
     docker:
       - image: circleci/openjdk:8-jdk-stretch
-      - image: circleci/postgres:9.6.3-alpine
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_DB: circle_test
 
-    steps:
+    steps:  #Here you define the steps for the build job
 
-      - checkout
+      - checkout  #checkout lets us operate on codebase 
 
-      - restore_cache:
+      - restore_cache:  # This restores a saved cache 
           key: circleci-demo-java-spring-{{ checksum "pom.xml" }}
       
-      - run: mvn dependency:go-offline
+      - run: mvn dependency:go-offline  # This retrieves the dependencies
       
-      - save_cache:
+      - save_cache:  # This saves the cache to make it faster next time
           paths:
             - ~/.m2
           key: circleci-demo-java-spring-{{ checksum "pom.xml" }}
       
-      - run: mvn package
-      
-      - store_test_results:
+      - store_test_results:  # This allows the test data to show up in the circleci dashboard
           path: target/surefire-reports
       
-      - store_artifacts:
+      - store_artifacts:  #stores the jar file
           path: target/demo-java-spring-0.0.1-SNAPSHOT.jar
